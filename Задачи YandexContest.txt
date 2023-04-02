@@ -1,0 +1,688 @@
+1.1:
+
+from collections import Counter
+from sys import stdin
+
+lines = ''.join([j.strip('\n').replace(' ', '') for j in stdin.readlines()])
+counter = Counter(''.join(lines))
+lines = sorted(counter.most_common())
+for line_no in range(counter.most_common(1)[0][1], 0, -1):
+    for sign, numb in lines:
+        if numb >= line_no:
+            print('#', end='')
+        else:
+            print(' ', end='')
+    print()
+
+for sign, numb in lines:
+    print(sign, end='')
+print()
+
+1.2:
+
+with open("input.txt", 'r') as input_file:
+    k = int(input_file.readline().strip('\n'))
+    word = input_file.readline()
+if k >= len(word):
+    print(len(word))
+elif len(word) == 0:
+    print(0)
+else:
+    word = word.strip('\n')
+    max_beauty = 0
+    unique_letters = set(word)
+    for letter in unique_letters:
+        left = 0
+        right = 0
+        cur_k = k
+        for el in word:
+            right += 1
+            if el != letter:
+                if cur_k == 0:
+                    if right - left - 1 > max_beauty:
+                        max_beauty = right - left - 1
+                    while word[left] == letter:
+                        left += 1
+                    left += 1
+                else:
+                    cur_k -= 1
+        if right - left > max_beauty:
+            max_beauty = right - left
+    with open('output.txt', 'w') as output_file:
+        print(max_beauty, file=output_file)
+
+1.3:
+
+def bin_search(el, arr, arr_len):
+    if arr_len == 0:
+        return 0
+    left = 0
+    right = arr_len - 1
+    while right > left:
+        mid = (right + left) // 2
+        guess = arr[mid]
+        if guess > el:
+            right = mid - 1
+        elif guess == el:
+            return mid
+        else:
+            left = mid + 1
+    else:
+        if arr[left] >= el:
+            return left
+        else:
+            return left + 1
+
+
+n = int(input())
+count = list()
+if n != 0:
+    count = sorted(set([int(j) for j in input().split()]))
+k = int(input())
+collectors = list()
+if k != 0:
+    collectors = [int(j) for j in input().split()]
+length = len(count)
+for mark in collectors:
+    print(bin_search(mark, count, length))
+
+1.4:
+
+n, k, row, place = int(input()), int(input()), int(input()), int(input())  # place: 1 - right, 2 - left
+
+position = (row - 1) * 2 + place  # Petya's position
+if position + k > n and position - k <= 0:
+    print(-1)
+elif position - k > 0 and position + k <= n:
+    row1 = (position - k - 1) // 2 + 1
+    row2 = (position + k - 1) // 2 + 1
+    if row - row1 < row2 - row:
+        print(row1, (position - k - 1) % 2 + 1)
+    else:
+        print(row2, (position + k- 1) % 2 + 1)
+elif position - k > 0:
+    position -= k
+    print((position - 1) // 2 + 1, (position - 1) % 2 + 1)
+else:
+    position += k
+    print((position - 1) // 2 + 1, (position - 1) % 2 + 1)
+
+1.5:
+
+
+
+1.9:
+
+matrix = list()
+n, m, k = [int(j) for j in input().split()]
+for i in range(n):
+    matrix.append([0] + [int(j) for j in input().split()])
+matrix = [[0] * (m + 1)] + matrix
+sub_matrix = list()
+for i, row in enumerate(matrix):
+    for j, el in enumerate(row):
+        if j == 0:
+            sub_matrix.append([0])
+        elif i == 0 and j != 0:
+            sub_matrix[i].append(sub_matrix[i][j - 1] + el)
+        else:
+            sub_matrix[i].append(sub_matrix[i][j - 1] + sub_matrix[i - 1][j] - sub_matrix[i - 1][j - 1] + el)
+for _ in range(k):
+    x1, y1, x2, y2 = [int(j) for j in input().split()]
+    print(sub_matrix[x2][y2] - sub_matrix[x2][y1 - 1] - sub_matrix[x1 - 1][y2] + sub_matrix[x1 - 1][y1 - 1])
+
+1.10:
+
+
+
+1.11:
+
+stack = list()
+while command := input():
+    if command.startswith('push'):
+        com, num = command.strip('\n').split()
+        stack.append(int(num))
+        print("ok")
+    else:
+        match command:
+            case "pop":
+                print(stack.pop() if len(stack) else "error")
+            case "back":
+                print(stack[-1] if len(stack) else "error")
+            case "size":
+                print(len(stack))
+            case "clear":
+                stack = list()
+                print("ok")
+            case "exit":
+                print("bye")
+                break
+
+1.12:
+
+stack = list()
+for sym in input():
+    stack.append(sym)
+    if sym in (')', ']', '}'):
+        stack.pop()
+        if len(stack):
+            check = stack.pop()
+            if check == '(':
+                if sym != ')':
+                    print("no")
+                    break
+            elif check == '[':
+                if sym != ']':
+                    print("no")
+                    break
+            elif check == '{':
+                if sym != '}':
+                    print("no")
+                    break
+        else:
+            print("no")
+            break
+else:
+    if len(stack):
+        print("no")
+    else:
+        print("yes")
+
+1.13:
+
+stack = list()
+for el in input().strip('\n').split():
+    if el in ('+', '-', '*', ):
+        b, a = stack.pop(), stack.pop()
+        match el:
+            case '+':
+                stack.append(a + b)
+            case '-':
+                stack.append(a - b)
+            case '*':
+                stack.append(a * b)
+    else:
+        stack.append(int(el))
+print(stack[0])
+
+1.14:
+
+stack = list()
+n = int(input())
+cur_car = 1
+for el in input().strip('\n').split():
+    if int(el) != cur_car:
+        stack.append(int(el))
+    else:
+        cur_car += 1
+        while (index := len(stack) - 1) >= 0 and stack[index] == cur_car:
+            cur_car = stack.pop() + 1
+while (index := len(stack) - 1) >= 0 and stack[index] == cur_car:
+    cur_car = stack.pop() + 1
+if len(stack) != 0:
+    print("NO")
+else:
+    print("YES")
+
+1.15:
+
+n = int(input())
+prices = [int(j) for j in input().split()]
+stack = list()
+for ind, price in enumerate(prices.copy()):
+    if len(stack) != 0:
+        while (index := len(stack) - 1) >= 0 and stack[index][1] > price:
+            prices[stack[index][0]] = ind
+            stack.pop()
+    stack.append((ind, price))
+while (index := len(stack) - 1) >= 0:
+    prices[stack[index][0]] = -1
+    stack.pop()
+print(*prices)
+
+1.16:
+
+queue = list()
+while command := input():
+    command.strip('\n')
+    if command.startswith('push'):
+        com, num = command.split()
+        queue.append(int(num))
+        print("ok")
+    else:
+        match command:
+            case "pop":
+                if len(queue):
+                    print(queue[0])
+                    queue = queue[1:]
+                else:
+                    print("error")
+            case "front":
+                if len(queue):
+                    print(queue[0])
+                else:
+                    print("error")
+            case "size":
+                print(len(queue))
+            case "clear":
+                print("ok")
+                queue = list()
+            case "exit":
+                print("bye")
+                break
+
+1.17:
+
+from collections import deque
+
+que_1 = deque([int(j) for j in input().split()])
+que_2 = deque([int(j) for j in input().split()])
+count = 0
+while count != 10 ** 6:
+    first = que_1.popleft()
+    second = que_2.popleft()
+    if first == 9 and second == 0:
+        que_2.append(first)
+        que_2.append(second)
+    elif first > second or first == 0 and second == 9:
+        que_1.append(first)
+        que_1.append(second)
+    else:
+        que_2.append(first)
+        que_2.append(second)
+    count += 1
+    if len(que_1) == 0:
+        print("second", count)
+        break
+    elif len(que_2) == 0:
+        print("first", count)
+        break
+else:
+    print("botva")
+
+1.18:
+
+from collections import deque
+
+deq = deque()
+while command := input():
+    if command.startswith("push_front"):
+        deq.appendleft(int(command.split()[1]))
+        print("ok")
+    elif command.startswith("push_back"):
+        deq.append(int(command.split()[1]))
+        print("ok")
+    else:
+        match command:
+            case "pop_front":
+                if len(deq):
+                    print(deq.popleft())
+                else:
+                    print("error")
+            case "pop_back":
+                if len(deq):
+                    print(deq.pop())
+                else:
+                    print("error")
+            case "front":
+                if len(deq):
+                    el = deq.popleft()
+                    print(el)
+                    deq.appendleft(el)
+                else:
+                    print("error")
+            case "back":
+                if len(deq):
+                    el = deq.pop()
+                    print(el)
+                    deq.append(el)
+                else:
+                    print("error")
+            case "size":
+                print(len(deq))
+            case "clear":
+                deq = deque()
+                print("ok")
+            case "exit":
+                print("bye")
+                break
+
+1.19:
+
+class Heap:
+    def __init__(self):
+        self.array = []
+
+    def insert(self, number: int):
+        self.array.append(number)
+        if index := len(self.array) - 1:
+            while index and self.array[(index - 1) // 2] < self.array[index]:
+                self.array[(index - 1) // 2], self.array[index] = self.array[index], self.array[(index - 1) // 2]
+                index = (index - 1) // 2
+
+    def extract(self):
+        num = self.array[0]
+        self.array[0] = self.array[-1]
+        index = 0
+        while True:
+            if 2 * index + 2 < len(self.array):
+                el, left, right = self.array[index], self.array[2 * index + 1], self.array[2 * index + 2]
+                max_val = max(el, right, left)
+                if max_val == el:
+                    break
+                elif max_val == left:
+                    self.array[2 * index + 1], self.array[index] = self.array[index], self.array[2 * index + 1]
+                    index = 2 * index + 1
+                else:
+                    self.array[2 * index + 2], self.array[index] = self.array[index], self.array[2 * index + 2]
+                    index = 2 * index + 2
+            elif 2 * index + 1 < len(self.array):
+                if self.array[index] < self.array[2 * index + 1]:
+                    self.array[2 * index + 1], self.array[index] = self.array[index], self.array[2 * index + 1]
+                    index = 2 * index + 1
+                else:
+                    break
+            else:
+                break
+        self.array.pop()
+        return num
+
+
+n = int(input())
+heap = Heap()
+for i in range(n):
+    command = input()
+    command.strip('\n')
+    if command.startswith("0"):
+        heap.insert(int(command.split()[1]))
+    else:
+        print(heap.extract())
+
+1.20:
+
+class Heap:
+    def __init__(self, nums: list) -> None:
+        self.array = []
+        for num in nums:
+            self.insert(num)
+
+    def insert(self, number: int) -> None:
+        self.array.append(number)
+        if index := len(self.array) - 1:
+            while index and self.array[(index - 1) // 2] > self.array[index]:
+                self.array[(index - 1) // 2], self.array[index] = self.array[index], self.array[(index - 1) // 2]
+                index = (index - 1) // 2
+
+    def extract(self) -> int:
+        num = self.array[0]
+        self.array[0] = self.array[-1]
+        index = 0
+        while True:
+            if 2 * index + 2 < len(self.array):
+                el, left, right = self.array[index], self.array[2 * index + 1], self.array[2 * index + 2]
+                max_val = min(el, right, left)
+                if max_val == el:
+                    break
+                elif max_val == left:
+                    self.array[2 * index + 1], self.array[index] = self.array[index], self.array[2 * index + 1]
+                    index = 2 * index + 1
+                else:
+                    self.array[2 * index + 2], self.array[index] = self.array[index], self.array[2 * index + 2]
+                    index = 2 * index + 2
+            elif 2 * index + 1 < len(self.array):
+                if self.array[index] > self.array[2 * index + 1]:
+                    self.array[2 * index + 1], self.array[index] = self.array[index], self.array[2 * index + 1]
+                    index = 2 * index + 1
+                else:
+                    break
+            else:
+                break
+        self.array.pop()
+        return num
+
+
+n = int(input())
+heap = Heap([int(j) for j in input().split()])
+sorted_array = list()
+for i in range(n):
+    sorted_array.append(heap.extract())
+print(*sorted_array)
+
+1.21:
+
+n = int(input())
+dp = [(1, 1, 0), (2, 1, 1)]
+for i in range(2, n):
+    a, b, c = dp[i - 1]
+    dp.append(
+        (
+            a + b + c,
+            a,
+            b
+        )
+    )
+print(sum(dp[n - 1]))
+
+1.22:
+
+n, k = [int(j) for j in input().split()]
+line = [0] * k + [1] + [0] * (n - 1)
+for i in range(1 + k, n + k):
+    line[i] = sum(line[i - k:i])
+print(line[n + k - 1])
+
+1.24:
+
+n = int(input())
+que = list()
+
+prev_prices = [0, 0, 0]
+prev_prev_prices = [0, 0, 0]
+
+for i in range(n):
+    prices = [int(j) for j in input().split()]
+    if i == 0:
+        que.append(prices[0])
+    elif i == 1:
+        que.append(min(
+            que[i - 1] + prices[0],
+            prev_prices[1]
+        ))
+    elif i == 2:
+        que.append(min(
+            que[i - 1] + prices[0],
+            que[i - 2] + prev_prices[1],
+            prev_prev_prices[2]
+        ))
+    else:
+        que.append(min(
+            que[i - 1] + prices[0],
+            que[i - 2] + prev_prices[1],
+            que[i - 3] + prev_prev_prices[2]
+        ))
+
+    prev_prev_prices = prev_prices.copy()
+    prev_prices = prices.copy()
+
+print(que[n - 1])
+
+1.25:
+
+n = int(input())
+
+dots = sorted([int(j) for j in input().split()])
+lengths = [1e6, dots[1] - dots[0]]
+for i in range(2, n):
+    min_len = dots[i] - dots[i - 1] + lengths[i - 1]
+    for index in range(i - 1, 0, -1):
+        if dots[i] - dots[index] + lengths[index - 1] < min_len:
+            min_len = dots[i] - dots[index] + lengths[index - 1]
+    lengths.append(min_len)
+print(lengths[-1])
+
+1.27:
+
+n, m = [int(j) for j in input().split()]
+
+money = [[int(j) for j in input().split()] for _ in range(n)]
+max_money = [[0] * m for _ in range(n)]
+
+for i, row in enumerate(money):
+    for j, col in enumerate(row):
+        if i == 0 and j == 0:
+            max_money[i][j] = col
+        elif i == 0:
+            max_money[i][j] = max_money[i][j - 1] + col
+        elif j == 0:
+            max_money[i][j] = max_money[i - 1][j] + col
+        else:
+            max_money[i][j] = max(max_money[i - 1][j], max_money[i][j - 1]) + col
+
+sequence = list()
+i, j = n - 1, m - 1
+while i or j:
+    if i == 0:
+        sequence.append('R')
+        j -= 1
+    elif j == 0:
+        sequence.append('D')
+        i -= 1
+    else:
+        if max_money[i - 1][j] >= max_money[i][j - 1]:
+            sequence.append('D')
+            i -= 1
+        else:
+            sequence.append('R')
+            j -= 1
+print(max_money[-1][-1])
+print(*sequence[::-1])
+
+1.28:
+
+n, m = [int(j) for j in input().split()]
+
+board = [[1] * m for _ in range(n)]
+
+
+for i in range(n):
+    for j in range(m):
+        if i == 0 and j == 0:
+            board[i][j] = 1
+        elif i == 0 or j == 0:
+            board[i][j] = 0
+        elif i == 1 and j == 1:
+            board[i][j] = 0
+        elif i == 1:
+            board[i][j] = board[i - 1][j - 2]
+        elif j == 1:
+            board[i][j] = board[i - 2][j - 1]
+        else:
+            board[i][j] = board[i - 1][j - 2] + board[i - 2][j - 1]
+
+print(board[-1][-1])
+
+1.29:
+
+import sys
+
+n = int(input())
+if n == 0:
+    print(0)
+    print(f"0 0")
+    sys.exit()
+prices = [int(input()) for i in range(n)]
+max_coupons = sum(map(lambda x: 1 if x > 100 else 0, prices))
+day_coupon = [[301 * (n + 1)] * (max_coupons + 2) for _ in range(n)]
+
+for i in range(n):
+    if i == 0:
+        if prices[i] > 100:
+            day_coupon[i][1] = prices[i]
+        else:
+            day_coupon[i][0] = prices[i]
+    else:
+        for j in range(max_coupons + 1):
+            if prices[i] > 100:
+                if j == 0:
+                    day_coupon[i][j] = day_coupon[i - 1][j + 1]
+                else:
+                    day_coupon[i][j] = min(day_coupon[i - 1][j - 1] + prices[i], day_coupon[i - 1][j + 1])
+            else:
+                day_coupon[i][j] = min(day_coupon[i - 1][j] + prices[i], day_coupon[i - 1][j + 1])
+min_price = min(day_coupon[-1])
+print(min_price)
+cur_coupons = 0
+for index, el in enumerate(day_coupon[-1][::-1]):
+    if el == min_price:
+        cur_coupons = max_coupons - index + 1
+        break
+print(cur_coupons, end=' ')
+index = len(day_coupon) - 1
+spent_coupons = 0
+spent_days = list()
+while index > 0:
+    if prices[index] > 100:
+        if cur_coupons == 0:
+            cur_coupons += 1
+            spent_coupons += 1
+            spent_days.append(index + 1)
+        else:
+            if day_coupon[index - 1][cur_coupons - 1] + prices[index] >= day_coupon[index - 1][cur_coupons + 1]:
+                cur_coupons += 1
+                spent_coupons += 1
+                spent_days.append(index + 1)
+            else:
+                cur_coupons -= 1
+    else:
+        if day_coupon[index - 1][cur_coupons] + prices[index] >= day_coupon[index - 1][cur_coupons + 1]:
+            cur_coupons += 1
+            spent_coupons += 1
+            spent_days.append(index + 1)
+    index -= 1
+
+print(spent_coupons)
+print(*spent_days[::-1], sep='\n')
+
+1.30:
+
+n = int(input())
+first = [int(j) for j in input().split()]
+m = int(input())
+second = [int(j) for j in input().split()]
+
+table = [[0] * n for _ in range(m)]
+for i in range(m):
+    for j in range(n):
+        if i == 0:
+            if j == 0:
+                if first[j] == second[i]:
+                    table[i][j] = 1
+            else:
+                table[i][j] = max(table[i][j - 1], int(second[i] == first[j]))
+        else:
+            if j == 0:
+                table[i][j] = max(table[i - 1][j], int(second[i] == first[j]))
+            else:
+                if second[i] == first[j]:
+                    table[i][j] = table[i - 1][j - 1] + 1
+                else:
+                    table[i][j] = max(table[i - 1][j], table[i][j - 1])
+i, j = m - 1, n - 1
+sequence = list()
+while i >= 0 or j >= 0:
+    if i == 0 or j == 0:
+        if table[i][j] == 1:
+            sequence.append(first[j] if j == 0 else second[i])
+        break
+    else:
+        if second[i] == first[j]:
+            sequence.append(second[i])
+            i -= 1
+            j -= 1
+        else:
+            if table[i - 1][j] >= table[i][j]:
+                i -= 1
+            else:
+                j -= 1
+print(*sequence[::-1])
+
